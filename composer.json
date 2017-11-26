@@ -1,0 +1,27 @@
+{
+    "name": "disparity/relationship-fixer",
+    "type": "library",
+    "description": "Two way relationship fixer for Doctrine ORM",
+    "keywords": ["relationship fixer", "doctrine", "orm"],
+    "homepage": "",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Disparity",
+            "email": "disparity-github@yandex.ru"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.9",
+        "doctrine/orm": "~2.4,>=2.4.5"
+    },
+    "autoload": {
+        "psr-4": {"Disparity\\Relationship\\": "src"}
+    },
+    "autoload-dev": {
+        "psr-4": {"Disparity\\Relationship\\": "tests"}
+    },
+    "require-dev": {
+    },
+    "minimum-stability": "dev"
+}
