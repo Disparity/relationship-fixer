@@ -1,0 +1,4 @@
+theme: jekyll-theme-slate
+title: Entity relationship fixer
+description: Entity relationship fixer for doctrine ORM entities
+google_analytics: UA-68396790-3
