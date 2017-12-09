@@ -10,8 +10,9 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use PHPUnit\Framework\TestCase;
 
-class ManyToManyTest extends \PHPUnit_Framework_TestCase
+class ManyToManyTest extends TestCase
 {
     /**
      * @var Fixer

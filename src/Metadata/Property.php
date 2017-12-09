@@ -56,7 +56,7 @@ class Property implements PropertyInterface
             return $this->isCollection() ? new NullCollection() : null;
         }
 
-        return $this->refProperty->getValue($this->loader->load($entity));
+        return $this->loader->load($this->refProperty->getValue($this->loader->load($entity)));
     }
 
     /**

@@ -1,0 +1,25 @@
+dist: trusty
+sudo: false
+language: php
+
+php:
+  - 7.0
+  - 7.1
+  - 7.2
+  - nightly
+
+before_install:
+  - composer self-update
+
+install: travis_retry composer update --prefer-dist --no-interaction
+
+script:
+  - ENABLE_SECOND_LEVEL_CACHE=0 ./vendor/bin/phpunit  --coverage-clover=coverage.xml -v
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+after_success:
+  # Submit coverage report to codecov.io
+  - bash <(curl -s https://codecov.io/bash)

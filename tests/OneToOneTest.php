@@ -9,8 +9,9 @@ use Disparity\Relationship\Metadata\PropertyMetadataFactory;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use PHPUnit\Framework\TestCase;
 
-class OneToOneTest extends \PHPUnit_Framework_TestCase
+class OneToOneTest extends TestCase
 {
     /**
      * @var Fixer
