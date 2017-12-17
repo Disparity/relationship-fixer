@@ -1,11 +1,11 @@
 <?php
 
-namespace Disparity\Relationship;
+namespace Fixrel;
 
-use Disparity\Relationship\Fixer;
-use Disparity\Relationship\Metadata\ClassMetadataFactoryInterface;
-use Disparity\Relationship\Metadata\DoctrineProxyLoader;
-use Disparity\Relationship\Metadata\PropertyMetadataFactory;
+use Fixrel\Fixer;
+use Fixrel\Metadata\ClassMetadataFactoryInterface;
+use Fixrel\Metadata\DoctrineProxyLoader;
+use Fixrel\Metadata\PropertyMetadataFactory;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -103,7 +103,7 @@ class OneToManyTest extends TestCase
 class OneToMany1
 {
     /**
-     * @ORM\OneToMany(targetEntity="Disparity\Relationship\OneToMany2", mappedBy="var")
+     * @ORM\OneToMany(targetEntity="Fixrel\OneToMany2", mappedBy="var")
      */
     public $var;
 
@@ -119,7 +119,7 @@ class OneToMany1
 class OneToMany2
 {
     /**
-     * @ORM\ManyToOne(targetEntity="Disparity\Relationship\OneToMany1", inversedBy="var")
+     * @ORM\ManyToOne(targetEntity="Fixrel\OneToMany1", inversedBy="var")
      */
     public $var;
 }
@@ -130,7 +130,7 @@ class OneToMany2
 class OneToMany3
 {
     /**
-     * @ORM\ManyToMany(targetEntity="Disparity\Relationship\OneToMany4")
+     * @ORM\ManyToMany(targetEntity="Fixrel\OneToMany4")
      */
     public $var;
 

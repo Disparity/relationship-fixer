@@ -1,6 +1,6 @@
 <?php
 
-namespace Disparity\Relationship;
+namespace Fixrel;
 
 trait FixerTrait
 {

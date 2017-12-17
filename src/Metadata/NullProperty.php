@@ -1,8 +1,8 @@
 <?php
 
-namespace Disparity\Relationship\Metadata;
+namespace Fixrel\Metadata;
 
-use Disparity\Relationship\NullCollection;
+use Fixrel\NullCollection;
 
 class NullProperty implements PropertyInterface
 {

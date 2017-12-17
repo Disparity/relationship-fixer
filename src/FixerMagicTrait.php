@@ -1,8 +1,8 @@
 <?php
 
-namespace Disparity\Relationship;
+namespace Fixrel;
 
-use Disparity\Relationship\Exception\UndefinedAssociationException;
+use Fixrel\Exception\UndefinedAssociationException;
 
 trait FixerMagicTrait
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Disparity\Relationship;
+namespace Fixrel;
 
-use Disparity\Relationship\Fixer;
-use Disparity\Relationship\Metadata\ClassMetadataFactoryInterface;
-use Disparity\Relationship\Metadata\DoctrineProxyLoader;
-use Disparity\Relationship\Metadata\PropertyMetadataFactory;
+use Fixrel\Fixer;
+use Fixrel\Metadata\ClassMetadataFactoryInterface;
+use Fixrel\Metadata\DoctrineProxyLoader;
+use Fixrel\Metadata\PropertyMetadataFactory;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
@@ -135,7 +135,7 @@ class OneToOneTest extends TestCase
 class OneToOne1
 {
     /**
-     * @ORM\OneToOne(targetEntity="Disparity\Relationship\OneToOne2", inversedBy="var")
+     * @ORM\OneToOne(targetEntity="Fixrel\OneToOne2", inversedBy="var")
      */
     public $var;
 }
@@ -146,7 +146,7 @@ class OneToOne1
 class OneToOne2
 {
     /**
-     * @ORM\OneToOne(targetEntity="Disparity\Relationship\OneToOne1", mappedBy="var")
+     * @ORM\OneToOne(targetEntity="Fixrel\OneToOne1", mappedBy="var")
      */
     public $var;
 }
@@ -157,7 +157,7 @@ class OneToOne2
 class OneToOne3
 {
     /**
-     * @ORM\OneToOne(targetEntity="Disparity\Relationship\OneToOne4")
+     * @ORM\OneToOne(targetEntity="Fixrel\OneToOne4")
      */
     public $var;
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Disparity\Relationship\Metadata;
+namespace Fixrel\Metadata;
 
-use Disparity\Relationship\Exception\UndefinedAssociationException;
+use Fixrel\Exception\UndefinedAssociationException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 class PropertyMetadataFactory

@@ -1,8 +1,8 @@
 {
-    "name": "disparity/relationship-fixer",
+    "name": "disparity/fixrel",
     "type": "library",
     "description": "Two way relationship fixer for Doctrine ORM",
-    "keywords": ["relationship fixer", "doctrine", "orm"],
+    "keywords": ["relationship fixer", "doctrine", "orm", "entity"],
     "homepage": "https://disparity.github.io/relationship-fixer",
     "license": "MIT",
     "authors": [
@@ -20,10 +20,10 @@
         "symfony/phpunit-bridge": "^4.1@dev"
     },
     "autoload": {
-        "psr-4": {"Disparity\\Relationship\\": "src"}
+        "psr-4": {"Fixrel\\": "src"}
     },
     "autoload-dev": {
-        "psr-4": {"Disparity\\Relationship\\": "tests"}
+        "psr-4": {"Fixrel\\": "tests"}
     },
     "scripts": {
         "test": "./vendor/bin/phpunit"

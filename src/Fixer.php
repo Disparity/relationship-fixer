@@ -1,9 +1,9 @@
 <?php
 
-namespace Disparity\Relationship;
+namespace Fixrel;
 
-use Disparity\Relationship\Metadata\PropertyInterface;
-use Disparity\Relationship\Metadata\PropertyMetadataFactory;
+use Fixrel\Metadata\PropertyInterface;
+use Fixrel\Metadata\PropertyMetadataFactory;
 
 class Fixer
 {

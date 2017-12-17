@@ -1,6 +1,6 @@
 <?php
 
-namespace Disparity\Relationship\Exception;
+namespace Fixrel\Exception;
 
 class UndefinedAssociationException extends FixerException
 {

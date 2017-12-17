@@ -1,6 +1,6 @@
 <?php
 
-namespace Disparity\Relationship\Metadata;
+namespace Fixrel\Metadata;
 
 interface PropertyInterface
 {
