@@ -1,7 +1,8 @@
 <?php
 
-namespace Fixrel;
+namespace Fixrel\Tests;
 
+use Fixrel\Exception\UnexpectedAssociationTypeException;
 use Fixrel\Fixer;
 use Fixrel\Metadata\ClassMetadataFactoryInterface;
 use Fixrel\Metadata\DoctrineProxyLoader;
@@ -10,38 +11,41 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Fixrel\Tests\Fixtures\ManyToOne1;
+use Fixrel\Tests\Fixtures\ManyToOne2;
+use Fixrel\Tests\Fixtures\ManyToOne3;
+use Fixrel\Tests\Fixtures\ManyToOne4;
 use PHPUnit\Framework\TestCase;
 
 class ManyToOneTest extends TestCase
 {
-    /**
-     * @var Fixer
-     */
-    private static $fixer;
-
-    public static function setUpBeforeClass()
+    public function metadataProvider()
     {
         $classMetadataFactory = new class implements ClassMetadataFactoryInterface {
             public function getMetadataFor($className)
             {
                 $classMetadata = new ORM\ClassMetadata($className, new ORM\UnderscoreNamingStrategy());
                 (new AnnotationDriver(new AnnotationReader()))->loadMetadataForClass($className, $classMetadata);
+
                 return $classMetadata;
             }
         };
 
-        static::$fixer = $fixer = new Fixer(new PropertyMetadataFactory(
-            $classMetadataFactory, new DoctrineProxyLoader()
-        ));
+        $metadataFactory = new PropertyMetadataFactory($classMetadataFactory, new DoctrineProxyLoader());
+
+        return [
+            [$metadataFactory],
+        ];
     }
 
-    public static function tearDownAfterClass()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testBidirectional(PropertyMetadataFactory $metadataFactory)
     {
-        static::$fixer = null;
-    }
+        $fixer = new Fixer($metadataFactory);
 
-    public function testBidirectional()
-    {
         $entity1 = new ManyToOne1();
         $entity2 = new ManyToOne2();
         $entity3 = new ManyToOne2();
@@ -49,49 +53,73 @@ class ManyToOneTest extends TestCase
         $entity1->var = $entity2;
         $entity2->var->add($entity1);
 
-        static::$fixer->assign($entity1, 'var', $entity3);
+        $fixer->assign($entity1, 'var', $entity3);
 
         $this->assertContains($entity1, $entity3->var);
         $this->assertNotContains($entity1, $entity2->var);
         $this->assertEquals($entity3, $entity1->var);
     }
 
-    public function testBidirectionalWithNull()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testBidirectionalWithNull(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new ManyToOne1();
         $entity2 = new ManyToOne2();
 
-        static::$fixer->assign($entity1, 'var', $entity2);
+        $fixer->assign($entity1, 'var', $entity2);
 
         $this->assertContains($entity1, $entity2->var);
         $this->assertEquals($entity2, $entity1->var);
     }
 
-    public function testUnidirectional()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testUnidirectional(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new ManyToOne3();
         $entity2 = new ManyToOne4();
         $entity3 = new ManyToOne4();
 
         $entity1->var = $entity2;
 
-        static::$fixer->assign($entity1, 'var', $entity3);
+        $fixer->assign($entity1, 'var', $entity3);
 
         $this->assertEquals($entity3, $entity1->var);
     }
 
-    public function testUnidirectionalWithNull()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testUnidirectionalWithNull(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new ManyToOne3();
         $entity2 = new ManyToOne4();
 
-        static::$fixer->assign($entity1, 'var', $entity2);
+        $fixer->assign($entity1, 'var', $entity2);
 
         $this->assertEquals($entity2, $entity1->var);
     }
 
-    public function testBidirectionalWithEqualValues()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testBidirectionalWithEqualValues(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new ManyToOne1();
         $entity2 = new ManyToOne2();
 
@@ -102,51 +130,21 @@ class ManyToOneTest extends TestCase
         $mockedCollection->expects($this->never())->method('add');
         $mockedCollection->expects($this->never())->method('removeElement');
 
-        static::$fixer->assign($entity1, 'var', $entity2);
+        $fixer->assign($entity1, 'var', $entity2);
     }
-}
 
-/**
- * @ORM\Entity()
- */
-class ManyToOne1
-{
     /**
-     * @ORM\ManyToOne(targetEntity="Fixrel\ManyToOne2", inversedBy="var")
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
      */
-    public $var;
-}
-
-/**
- * @ORM\Entity()
- */
-class ManyToOne2
-{
-    /**
-     * @ORM\OneToMany(targetEntity="Fixrel\ManyToOne1", mappedBy="var")
-     */
-    public $var;
-
-    public function __construct()
+    public function testBidirectionalAssignCollection(PropertyMetadataFactory $metadataFactory)
     {
-        $this->var = new ArrayCollection();
+        $fixer = new Fixer($metadataFactory);
+
+        $entity1 = new ManyToOne1();
+        $entity2 = new ManyToOne2();
+
+        $this->expectException(UnexpectedAssociationTypeException::class);
+        $fixer->assign($entity2, 'var', new ArrayCollection([$entity1]));
     }
-}
-
-/**
- * @ORM\Entity()
- */
-class ManyToOne3
-{
-    /**
-     * @ORM\ManyToOne(targetEntity="Fixrel\ManyToOne4")
-     */
-    public $var;
-}
-
-/**
- * @ORM\Entity()
- */
-class ManyToOne4
-{
 }

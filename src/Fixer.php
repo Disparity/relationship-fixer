@@ -2,6 +2,7 @@
 
 namespace Fixrel;
 
+use Fixrel\Exception\UnexpectedAssociationTypeException;
 use Fixrel\Metadata\PropertyInterface;
 use Fixrel\Metadata\PropertyMetadataFactory;
 
@@ -71,14 +72,15 @@ class Fixer
      * @param string $propertyName
      * @param mixed $value
      * @return bool
-     * @throws \Exception
+     * @throws Exception\UndefinedAssociationException
+     * @throws UnexpectedAssociationTypeException
      */
     public function assign($_this, $propertyName, $value)
     {
         $property = $this->propertyMetadataFactory->getMetadataFor(get_class($_this), $propertyName);
 
         if ($property->isCollection()) {
-            throw new \Exception(''); // @todo fix exception message
+            throw new UnexpectedAssociationTypeException('Assign can not be applied to a collection. Use collectionAdd or collectionRemove'); // @todo fix exception message
         }
 
         return $property->getInversedProperty()->isCollection() ?

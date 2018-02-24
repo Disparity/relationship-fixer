@@ -23,7 +23,7 @@
         "psr-4": {"Fixrel\\": "src"}
     },
     "autoload-dev": {
-        "psr-4": {"Fixrel\\": "tests"}
+        "psr-4": {"Fixrel\\Tests\\": "tests"}
     },
     "scripts": {
         "test": "./vendor/bin/phpunit"

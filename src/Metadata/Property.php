@@ -26,6 +26,7 @@ class Property implements PropertyInterface
      */
     private $toMany;
 
+
     /**
      * @internal
      * @param \ReflectionProperty $refProperty

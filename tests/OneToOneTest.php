@@ -1,6 +1,6 @@
 <?php
 
-namespace Fixrel;
+namespace Fixrel\Tests;
 
 use Fixrel\Fixer;
 use Fixrel\Metadata\ClassMetadataFactoryInterface;
@@ -9,38 +9,41 @@ use Fixrel\Metadata\PropertyMetadataFactory;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Fixrel\Tests\Fixtures\OneToOne1;
+use Fixrel\Tests\Fixtures\OneToOne2;
+use Fixrel\Tests\Fixtures\OneToOne3;
+use Fixrel\Tests\Fixtures\OneToOne4;
 use PHPUnit\Framework\TestCase;
 
 class OneToOneTest extends TestCase
 {
-    /**
-     * @var Fixer
-     */
-    private static $fixer;
-
-    public static function setUpBeforeClass()
+    public function metadataProvider()
     {
         $classMetadataFactory = new class implements ClassMetadataFactoryInterface {
             public function getMetadataFor($className)
             {
                 $classMetadata = new ORM\ClassMetadata($className, new ORM\UnderscoreNamingStrategy());
                 (new AnnotationDriver(new AnnotationReader()))->loadMetadataForClass($className, $classMetadata);
+
                 return $classMetadata;
             }
         };
 
-        static::$fixer = $fixer = new Fixer(new PropertyMetadataFactory(
-            $classMetadataFactory, new DoctrineProxyLoader()
-        ));
+        $metadataFactory = new PropertyMetadataFactory($classMetadataFactory, new DoctrineProxyLoader());
+
+        return [
+            [$metadataFactory],
+        ];
     }
 
-    public static function tearDownAfterClass()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testBidirectional(PropertyMetadataFactory $metadataFactory)
     {
-        static::$fixer = null;
-    }
+        $fixer = new Fixer($metadataFactory);
 
-    public function testBidirectional()
-    {
         $entity1 = new OneToOne1();
         $entity2 = new OneToOne2();
         $entity3 = new OneToOne1();
@@ -51,7 +54,7 @@ class OneToOneTest extends TestCase
         $entity3->var = $entity4;
         $entity4->var = $entity3;
 
-        static::$fixer->assign($entity2, 'var', $entity3);
+        $fixer->assign($entity2, 'var', $entity3);
 
         $this->assertNull($entity1->var);
         $this->assertNull($entity4->var);
@@ -59,8 +62,14 @@ class OneToOneTest extends TestCase
         $this->assertEquals($entity2, $entity3->var);
     }
 
-    public function testBidirectionalInverse()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testBidirectionalInverse(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new OneToOne1();
         $entity2 = new OneToOne2();
         $entity3 = new OneToOne1();
@@ -71,7 +80,7 @@ class OneToOneTest extends TestCase
         $entity3->var = $entity4;
         $entity4->var = $entity3;
 
-        static::$fixer->assign($entity3, 'var', $entity2);
+        $fixer->assign($entity3, 'var', $entity2);
 
         $this->assertNull($entity1->var);
         $this->assertNull($entity4->var);
@@ -79,19 +88,31 @@ class OneToOneTest extends TestCase
         $this->assertEquals($entity2, $entity3->var);
     }
 
-    public function testBidirectionalWithNulls()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testBidirectionalWithNulls(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new OneToOne1();
         $entity2 = new OneToOne2();
 
-        static::$fixer->assign($entity1, 'var', $entity2);
+        $fixer->assign($entity1, 'var', $entity2);
 
         $this->assertEquals($entity2, $entity1->var);
         $this->assertEquals($entity1, $entity2->var);
     }
 
-    public function testUnidirectional()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testUnidirectional(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new OneToOne3();
         $entity2 = new OneToOne4();
         $entity3 = new OneToOne3();
@@ -100,71 +121,63 @@ class OneToOneTest extends TestCase
         $entity1->var = $entity2;
         $entity3->var = $entity4;
 
-        static::$fixer->assign($entity3, 'var', $entity2);
+        $fixer->assign($entity3, 'var', $entity2);
 
         // $this->assertNull($entity1->var); // implementation gap
         $this->assertEquals($entity2, $entity3->var);
     }
 
-    public function testUnidirectionalWithNulls()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testUnidirectionalWithNulls(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new OneToOne3();
         $entity2 = new OneToOne4();
 
-        static::$fixer->assign($entity1, 'var', $entity2);
+        $fixer->assign($entity1, 'var', $entity2);
 
         $this->assertEquals($entity2, $entity1->var);
     }
 
-    public function testBidirectionalSetNullOnOtherSide()
+    /**
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
+     */
+    public function testBidirectionalSetNullOnOtherSide(PropertyMetadataFactory $metadataFactory)
     {
+        $fixer = new Fixer($metadataFactory);
+
         $entity1 = new OneToOne2();
         $entity2 = new OneToOne1();
         $entity2->var = $entity1;
         $entity1->var = $entity2;
 
-        static::$fixer->assign($entity1, 'var', null);
+        $fixer->assign($entity1, 'var', null);
 
         $this->assertNull($entity2->var);
     }
-}
 
-/**
- * @ORM\Entity()
- */
-class OneToOne1
-{
     /**
-     * @ORM\OneToOne(targetEntity="Fixrel\OneToOne2", inversedBy="var")
+     * @dataProvider metadataProvider
+     * @param PropertyMetadataFactory $metadataFactory
      */
-    public $var;
-}
+    public function testBidirectionalWithEqualValues(PropertyMetadataFactory $metadataFactory)
+    {
+        $fixer = new Fixer($metadataFactory);
 
-/**
- * @ORM\Entity()
- */
-class OneToOne2
-{
-    /**
-     * @ORM\OneToOne(targetEntity="Fixrel\OneToOne1", mappedBy="var")
-     */
-    public $var;
-}
+        $entity1 = new OneToOne1();
+        $entity2 = new OneToOne2();
 
-/**
- * @ORM\Entity()
- */
-class OneToOne3
-{
-    /**
-     * @ORM\OneToOne(targetEntity="Fixrel\OneToOne4")
-     */
-    public $var;
-}
+        $entity2->var = $entity1;
+        $entity1->var = $entity2;
 
-/**
- * @ORM\Entity()
- */
-class OneToOne4
-{
+        $result = $fixer->assign($entity1, 'var', $entity2);
+
+        $this->assertEquals($entity2, $entity1->var);
+        $this->assertFalse($result);
+    }
 }
