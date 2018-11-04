@@ -9,7 +9,7 @@ class Property implements PropertyInterface
     /**
      * @var PropertyInterface
      */
-    private $inversedProperty;
+    private $inverseProperty;
 
     /**
      * @var \ReflectionProperty
@@ -43,9 +43,9 @@ class Property implements PropertyInterface
     /**
      * @inheritdoc
      */
-    public function setInversedProperty(PropertyInterface $inversedProperty)
+    public function setInverseProperty(PropertyInterface $inverseProperty)
     {
-        $this->inversedProperty = $inversedProperty;
+        $this->inverseProperty = $inverseProperty;
     }
 
     /**
@@ -81,9 +81,9 @@ class Property implements PropertyInterface
     /**
      * @inheritdoc
      */
-    public function getInversedProperty()
+    public function getInverseProperty()
     {
-        return $this->inversedProperty;
+        return $this->inverseProperty;
     }
 
     /**

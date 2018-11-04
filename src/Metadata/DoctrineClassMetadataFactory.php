@@ -4,7 +4,7 @@ namespace Fixrel\Metadata;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 
-class DoctrineClassMetadataFactory implements ClassMetadataFactoryInterface
+final class DoctrineClassMetadataFactory implements ClassMetadataFactoryInterface
 {
     /**
      * @var ClassMetadataFactory

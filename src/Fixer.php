@@ -2,6 +2,7 @@
 
 namespace Fixrel;
 
+use Fixrel\Exception\UndefinedAssociationException;
 use Fixrel\Exception\UnexpectedAssociationTypeException;
 use Fixrel\Metadata\PropertyInterface;
 use Fixrel\Metadata\PropertyMetadataFactory;
@@ -36,11 +37,11 @@ class Fixer
             return false;
         }
 
-        $property->getInversedProperty()->setValue($oldValue, null);
-        $property->setValue($property->getInversedProperty()->getValue($value), null);
+        $property->getInverseProperty()->setValue($oldValue, null);
+        $property->setValue($property->getInverseProperty()->getValue($value), null);
 
         $property->setValue($_this, $value);
-        $property->getInversedProperty()->setValue($value, $_this);
+        $property->getInverseProperty()->setValue($value, $_this);
 
         return true;
     }
@@ -59,10 +60,10 @@ class Fixer
             return false;
         }
 
-        $property->getInversedProperty()->getValue($oldValue)->removeElement($_this);
+        $property->getInverseProperty()->getValue($oldValue)->removeElement($_this);
 
         $property->setValue($_this, $value);
-        $property->getInversedProperty()->getValue($value)->add($_this);
+        $property->getInverseProperty()->getValue($value)->add($_this);
 
         return true;
     }
@@ -72,18 +73,18 @@ class Fixer
      * @param string $propertyName
      * @param mixed $value
      * @return bool
-     * @throws Exception\UndefinedAssociationException
      * @throws UnexpectedAssociationTypeException
+     * @throws UndefinedAssociationException
      */
     public function assign($_this, $propertyName, $value)
     {
         $property = $this->propertyMetadataFactory->getMetadataFor(get_class($_this), $propertyName);
 
         if ($property->isCollection()) {
-            throw new UnexpectedAssociationTypeException('Assign can not be applied to a collection. Use collectionAdd or collectionRemove'); // @todo fix exception message
+            throw new UnexpectedAssociationTypeException('Assign can not be applied to a collection. Use collectionAdd or collectionRemove.');
         }
 
-        return $property->getInversedProperty()->isCollection() ?
+        return $property->getInverseProperty()->isCollection() ?
             $this->assignManyToOne($property, $_this, $value) :
             $this->assignOneToOne($property, $_this, $value)
         ;
@@ -94,13 +95,14 @@ class Fixer
      * @param string $propertyName
      * @param mixed $value
      * @return bool
+     * @throws UndefinedAssociationException
      */
     public function collectionAdd($_this, $propertyName, $value)
     {
         $property = $this->propertyMetadataFactory->getMetadataFor(get_class($_this), $propertyName);
 
-        if (!$property->getInversedProperty()->isCollection()) {
-            return $this->assignManyToOne($property->getInversedProperty(), $value, $_this);
+        if (!$property->getInverseProperty()->isCollection()) {
+            return $this->assignManyToOne($property->getInverseProperty(), $value, $_this);
         }
 
         if ($property->getValue($_this)->contains($value)) {
@@ -108,7 +110,7 @@ class Fixer
         }
 
         $property->getValue($_this)->add($value);
-        $property->getInversedProperty()->getValue($value)->add($_this);
+        $property->getInverseProperty()->getValue($value)->add($_this);
 
         return true;
     }
@@ -118,13 +120,14 @@ class Fixer
      * @param string $propertyName
      * @param mixed $value
      * @return bool
+     * @throws UndefinedAssociationException
      */
     public function collectionRemove($_this, $propertyName, $value)
     {
         $property = $this->propertyMetadataFactory->getMetadataFor(get_class($_this), $propertyName);
 
-        if (!$property->getInversedProperty()->isCollection()) {
-            return $this->assignManyToOne($property->getInversedProperty(), $value, null);
+        if (!$property->getInverseProperty()->isCollection()) {
+            return $this->assignManyToOne($property->getInverseProperty(), $value, null);
         }
 
         if (!$property->getValue($_this)->contains($value)) {
@@ -132,7 +135,7 @@ class Fixer
         }
 
         $property->getValue($_this)->removeElement($value);
-        $property->getInversedProperty()->getValue($value)->removeElement($_this);
+        $property->getInverseProperty()->getValue($value)->removeElement($_this);
 
         return true;
     }

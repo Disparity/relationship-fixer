@@ -24,7 +24,7 @@ interface PropertyInterface
     /**
      * @return PropertyInterface
      */
-    public function getInversedProperty();
+    public function getInverseProperty();
 
     /**
      * @return bool

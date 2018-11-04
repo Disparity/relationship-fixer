@@ -11,7 +11,7 @@ php:
 install: travis_retry composer update --prefer-dist --no-interaction
 
 script:
-  - ENABLE_SECOND_LEVEL_CACHE=0 ./vendor/bin/phpunit  --coverage-clover=coverage.xml -v
+  - ENABLE_SECOND_LEVEL_CACHE=0 composer test -- --coverage-clover=coverage.xml -v
 
 cache:
   directories:

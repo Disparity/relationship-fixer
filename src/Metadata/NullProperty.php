@@ -7,18 +7,18 @@ use Fixrel\NullCollection;
 class NullProperty implements PropertyInterface
 {
     /**
-     * @var Property
+     * @var PropertyInterface
      */
-    private $inversedProperty;
+    private $inverseProperty;
 
 
     /**
      * @internal
-     * @param PropertyInterface $inversedProperty
+     * @param PropertyInterface $inverseProperty
      */
-    public function setInversedProperty(PropertyInterface $inversedProperty)
+    public function setInverseProperty(PropertyInterface $inverseProperty)
     {
-        $this->inversedProperty = $inversedProperty;
+        $this->inverseProperty = $inverseProperty;
     }
 
     /**
@@ -40,9 +40,9 @@ class NullProperty implements PropertyInterface
     /**
      * @inheritdoc
      */
-    public function getInversedProperty()
+    public function getInverseProperty()
     {
-        return $this->inversedProperty;
+        return $this->inverseProperty;
     }
 
     /**

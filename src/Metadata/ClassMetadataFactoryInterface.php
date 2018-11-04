@@ -1,8 +1,7 @@
 <?php
 
 namespace Fixrel\Metadata;
-
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 interface ClassMetadataFactoryInterface
 {

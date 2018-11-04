@@ -2,18 +2,21 @@
 
 namespace Fixrel;
 
+use Fixrel\Exception\RuntimeException;
+use Fixrel\Exception\UndefinedAssociationException;
+use Fixrel\Exception\UnexpectedAssociationTypeException;
+
 trait FixerTrait
 {
     /**
      * @return Fixer
-     * @throws \Exception
      */
     private function getFixer()
     {
         $fixer = FixerStaticProxy::getFixer();
 
         if (!$fixer instanceof Fixer) {
-            throw new \Exception('StaticProxy doesn\'t initialized.'); //@todo fix exception
+            throw new RuntimeException('StaticProxy doesn\'t initialized.');
         }
 
         return $fixer;
@@ -23,7 +26,8 @@ trait FixerTrait
      * @param string $propertyName
      * @param mixed $value
      * @return bool
-     * @throws \Exception
+     * @throws UndefinedAssociationException
+     * @throws UnexpectedAssociationTypeException
      */
     protected function assign($propertyName, $value)
     {
@@ -34,7 +38,7 @@ trait FixerTrait
      * @param string $propertyName
      * @param mixed $value
      * @return bool
-     * @throws \Exception
+     * @throws UndefinedAssociationException
      */
     protected function collectionAdd($propertyName, $value)
     {
@@ -45,7 +49,7 @@ trait FixerTrait
      * @param string $propertyName
      * @param mixed $value
      * @return bool
-     * @throws \Exception
+     * @throws Exception\UndefinedAssociationException
      */
     protected function collectionRemove($propertyName, $value)
     {

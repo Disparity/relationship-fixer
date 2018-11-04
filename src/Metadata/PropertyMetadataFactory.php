@@ -5,7 +5,7 @@ namespace Fixrel\Metadata;
 use Fixrel\Exception\UndefinedAssociationException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
-class PropertyMetadataFactory
+final class PropertyMetadataFactory
 {
     /**
      * @var ClassMetadataFactoryInterface
@@ -38,32 +38,31 @@ class PropertyMetadataFactory
     {
         try {
             $classMetadata = $this->metadataFactory->getMetadataFor($className);
-            $inversedClassMetadata = $this->metadataFactory->getMetadataFor($classMetadata->getAssociationTargetClass($propertyName));
+            $inverseClassMetadata = $this->metadataFactory->getMetadataFor($classMetadata->getAssociationTargetClass($propertyName));
         } catch (\InvalidArgumentException $ex) {
             throw new UndefinedAssociationException($className, $propertyName, $ex);
         }
 
         if ($classMetadata->isAssociationInverseSide($propertyName)) {
-            // @todo check broken relationship
-            $backProperty = $this->buildProperty($inversedClassMetadata, $classMetadata->getAssociationMappedByTargetField($propertyName));
+            $inverseProperty = $this->buildProperty($inverseClassMetadata, $classMetadata->getAssociationMappedByTargetField($propertyName));
         } else {
-            foreach ($inversedClassMetadata->getAssociationNames() as $inversedPropertyName) {
-                if ($inversedClassMetadata->getAssociationMappedByTargetField($inversedPropertyName) === $propertyName) {
-                    $backProperty = $this->buildProperty($inversedClassMetadata, $inversedPropertyName);
+            foreach ($inverseClassMetadata->getAssociationNames() as $inversePropertyName) {
+                if ($inverseClassMetadata->getAssociationMappedByTargetField($inversePropertyName) === $propertyName) {
+                    $inverseProperty = $this->buildProperty($inverseClassMetadata, $inversePropertyName);
 
                     break;
                 }
             }
 
-            if (!isset($backProperty)) {
-                $backProperty = new NullProperty();
+            if (!isset($inverseProperty)) {
+                $inverseProperty = new NullProperty();
             }
         }
 
         $property = $this->buildProperty($classMetadata, $propertyName);
 
-        $backProperty->setInversedProperty($property);
-        $property->setInversedProperty($backProperty);
+        $inverseProperty->setInverseProperty($property);
+        $property->setInverseProperty($inverseProperty);
 
         return $property;
     }
@@ -76,7 +75,7 @@ class PropertyMetadataFactory
     private function buildProperty(ClassMetadata $classMetadata, $propertyName)
     {
         $ref = new \ReflectionProperty($classMetadata->getName(), $propertyName);
-        $ref->setAccessible(true); // @todo fix parent private property
+        $ref->setAccessible(true);
 
         return new Property($ref, $this->loader, $classMetadata->isCollectionValuedAssociation($propertyName));
     }

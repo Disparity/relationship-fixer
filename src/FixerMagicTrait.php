@@ -2,6 +2,7 @@
 
 namespace Fixrel;
 
+use Fixrel\Exception\BadMethodCallException;
 use Fixrel\Exception\UndefinedAssociationException;
 
 trait FixerMagicTrait
@@ -9,6 +10,11 @@ trait FixerMagicTrait
     use FixerTrait;
 
 
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @return bool
+     */
     public function __call($method, $arguments)
     {
         try {
@@ -20,10 +26,9 @@ trait FixerMagicTrait
                 }
             }
 
-            throw new \BadMethodCallException('Call to undefined method ' . get_class($this) . '::' . $method . '()');
+            throw new BadMethodCallException('Call to undefined method ' . get_class($this) . '::' . $method . '()');
         } catch (UndefinedAssociationException $ex) {
-            $className = get_class($this);
-            throw new \BadMethodCallException("Call to undefined method {$className}::{$method}()", 0, $ex);
+            throw new BadMethodCallException('Call to undefined method ' . get_class($this) . '::' . $method . '()', 0, $ex);
         }
     }
 }

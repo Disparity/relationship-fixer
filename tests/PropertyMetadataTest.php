@@ -77,8 +77,8 @@ class PropertyMetadataTest extends TestCase
         $this->assertInstanceOf($property[0], $actual);
         $this->assertEquals($property[1], $actual->isCollection());
 
-        $this->assertInstanceOf($inversedProperty[0], $actual->getInversedProperty());
-        $this->assertEquals($inversedProperty[1], $actual->getInversedProperty()->isCollection());
+        $this->assertInstanceOf($inversedProperty[0], $actual->getInverseProperty());
+        $this->assertEquals($inversedProperty[1], $actual->getInverseProperty()->isCollection());
     }
 
     public function testUndefinedPropertyMetadata()
